@@ -1,5 +1,0 @@
-# Root .gitignore
-node_modules/
-*.env
-dist/
-build/npm install react-router-dom axios @mui/material @emotion/react @emotion/styled react-hook-form react-toastify
