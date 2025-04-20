@@ -77,3 +77,30 @@ exports.getDashboardStats = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
+// Function to get most borrowed books
+async function mostBorrowedBooks(req, res) {
+    try {
+        const books = await Transaction.aggregate([
+            { $group: { _id: '$bookId', borrowCount: { $sum: 1 } } },
+            { $sort: { borrowCount: -1 } },
+            { $limit: 10 },
+            { $lookup: { from: 'books', localField: '_id', foreignField: '_id', as: 'bookDetails' } }
+        ]);
+        res.status(200).json(books);
+    } catch (error) {
+        res.status(500).json({ error: 'Error fetching most borrowed books' });
+    }
+}
+
+// Function to get overdue books
+async function overdueBooks(req, res) {
+    try {
+        const books = await Transaction.find({ returned: false, dueDate: { $lt: new Date() } }).populate('bookId');
+        res.status(200).json(books);
+    } catch (error) {
+        res.status(500).json({ error: 'Error fetching overdue books' });
+    }
+}
+
+module.exports = { mostBorrowedBooks, overdueBooks };

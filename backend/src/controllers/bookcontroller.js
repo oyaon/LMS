@@ -33,6 +33,52 @@ exports.getBooks = async (req, res) => {
   }
 };
 
+// Function to search books
+async function searchBooks(req, res) {
+    try {
+        const { query } = req.query;
+        const books = await Book.find({ title: { $regex: query, $options: 'i' } });
+        res.status(200).json(books);
+    } catch (error) {
+        res.status(500).json({ error: 'Error searching books' });
+    }
+}
+
+// Function to add a book
+async function addBook(req, res) {
+    try {
+        const newBook = new Book(req.body);
+        await newBook.save();
+        res.status(201).json(newBook);
+    } catch (error) {
+        res.status(500).json({ error: 'Error adding book' });
+    }
+}
+
+// Function to update a book
+async function updateBook(req, res) {
+    try {
+        const { id } = req.params;
+        const updatedBook = await Book.findByIdAndUpdate(id, req.body, { new: true });
+        res.status(200).json(updatedBook);
+    } catch (error) {
+        res.status(500).json({ error: 'Error updating book' });
+    }
+}
+
+// Function to delete a book
+async function deleteBook(req, res) {
+    try {
+        const { id } = req.params;
+        await Book.findByIdAndDelete(id);
+        res.status(200).json({ message: 'Book deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ error: 'Error deleting book' });
+    }
+}
+
+module.exports = { searchBooks, addBook, updateBook, deleteBook };
+
 exports.addBook = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {

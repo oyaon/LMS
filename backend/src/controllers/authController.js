@@ -168,3 +168,20 @@ exports.updateProfile = async (req, res) => {
     handleError(res, err);
   }
 };
+
+exports.getUserActivityLogs = async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    // Assuming `logActivity` stores logs in a database or file system
+    const logs = await logActivity.getLogsByUserId(userId);
+
+    if (!logs || logs.length === 0) {
+      return res.status(404).json({ message: 'No activity logs found for this user' });
+    }
+
+    res.json(logs);
+  } catch (err) {
+    handleError(res, err, 'Failed to retrieve user activity logs');
+  }
+};

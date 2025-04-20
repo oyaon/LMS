@@ -2,4 +2,16 @@
 node_modules/
 *.env
 dist/
-build/npm install react-router-dom axios @mui/material @emotion/react @emotion/styled react-hook-form react-toastify
+build/
+*.log
+logs/
+coverage/
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

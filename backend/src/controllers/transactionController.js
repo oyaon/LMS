@@ -90,3 +90,29 @@ exports.getUserTransactions = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
+// Function to view borrowing history
+async function viewHistory(req, res) {
+    try {
+        const { userId } = req.params;
+        const history = await Transaction.find({ userId }).populate('bookId');
+        res.status(200).json(history);
+    } catch (error) {
+        res.status(500).json({ error: 'Error fetching borrowing history' });
+    }
+}
+
+// Function to track fines
+async function trackFines(req, res) {
+    try {
+        const fines = await Transaction.aggregate([
+            { $match: { returned: false, dueDate: { $lt: new Date() } } },
+            { $project: { userId: 1, fine: { $multiply: [{ $subtract: [new Date(), '$dueDate'] }, 0.5] } } }
+        ]);
+        res.status(200).json(fines);
+    } catch (error) {
+        res.status(500).json({ error: 'Error tracking fines' });
+    }
+}
+
+module.exports = { viewHistory, trackFines };
